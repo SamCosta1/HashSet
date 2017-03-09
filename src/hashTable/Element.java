@@ -6,18 +6,21 @@ public class Element<T extends Comparable<T>> implements Comparable<T>{
 	private State state = State.EMPTY;
 	
 	public Element(T o) {
-		setElement((T)o);
-		state = State.IN_USE;
+		setElement(o);
 	}
 
 	@Override
-	public int compareTo(T other) {
-		return element.compareTo(other);
+	public int compareTo(T other) {		
+		int cmpTo = element.compareTo(other);
+		return state == State.IN_USE ? cmpTo : -1;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object other) {
+		if (state != State.IN_USE)
+			return false;
+		
 		if (other instanceof Comparable<?>)
 			return this.compareTo((T)other) == 0;
 		
@@ -37,6 +40,7 @@ public class Element<T extends Comparable<T>> implements Comparable<T>{
 	}
 
 	public void setElement(T element) {
+		state = State.IN_USE;
 		this.element = element;
 	}
 

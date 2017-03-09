@@ -137,6 +137,16 @@ public class HashSet<T extends Comparable<T>> extends AbstractSet<T>
 	}
 
 	@Override
+	public boolean addAll(Collection<? extends T> c) {
+		boolean changed = false;
+		for (T obj : c) {
+			if (this.add(obj))
+				changed = true;
+		}
+		
+		return changed;
+	}
+	@Override
 	public boolean add(T e) {	
 		
 		if (noElements >= elements.length - 1)
@@ -196,8 +206,8 @@ public class HashSet<T extends Comparable<T>> extends AbstractSet<T>
 			if (elements[newHash] == null || elements[newHash].isEmpty())
 				return false;
 			
-			if (elements[hash].equals(o)) {
-				elements[hash].remove();
+			if (elements[newHash].equals(o)) {
+				elements[newHash].remove();
 				noElements--;
 				return true;			
 			}
@@ -220,9 +230,18 @@ public class HashSet<T extends Comparable<T>> extends AbstractSet<T>
 	}
 	
 	@Override
+	public boolean containsAll(Collection<?> collection) {
+		for (Object obj : collection) 
+			if (!this.contains(obj))
+				return false;
+		
+		
+		return true;
+	}
+	
+	@Override
 	public boolean contains(Object o) {
 		int hash = hashCode(o);
-		
 		if (elements[hash] == null)
 			return false;
 		
@@ -239,7 +258,7 @@ public class HashSet<T extends Comparable<T>> extends AbstractSet<T>
 			if (elements[newHash] == null || elements[newHash].isEmpty())
 				return false;
 			
-			if (elements[hash].equals(o)) {				
+			if (elements[newHash].equals(o)) {				
 				return true;			
 			}
 			loopCount++;
