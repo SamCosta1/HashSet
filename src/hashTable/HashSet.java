@@ -55,8 +55,8 @@ public class HashSet<T extends Comparable<T>> extends AbstractSet<T>
 				} while	(nextIndex < elements.length &&					
 									(  elements[nextIndex] == null
 									   || !elements[nextIndex].isInUse() 
-									)							
-						);
+									));					
+						
 				
 			}
 
@@ -127,7 +127,8 @@ public class HashSet<T extends Comparable<T>> extends AbstractSet<T>
 	}
 
 	private int getDoubleHashVal(int hash, int loopCount) {
-		return (hash + loopCount * secondaryHash(hash)) % elements.length;
+		loopCount = loopCount % elements.length;		
+		return Math.abs((hash + loopCount * secondaryHash(hash) % elements.length) % elements.length);
 		
 	}
 
@@ -155,14 +156,16 @@ public class HashSet<T extends Comparable<T>> extends AbstractSet<T>
 
 	@SuppressWarnings("unchecked")
 	private void extendElementsArray() {
-		
 		Element<T> oldArray[] = elements;
 		elements = new Element[elements.length * 2 + 1];
 		
+		
 		totalCollisions = 0;
-		for (int i = 0; i < elements.length; i++) {
-			add(oldArray[i].getElement());
+		for (int i = 0; i < oldArray.length; i++) {
+			if (oldArray[i] != null && oldArray[i].isInUse())
+				insert(hashCode(oldArray[i].getElement()), oldArray[i].getElement());
 		}
+		
 		
 	}  
 
@@ -256,5 +259,7 @@ public class HashSet<T extends Comparable<T>> extends AbstractSet<T>
 		
 		System.out.println("Avrg Collisions: " + (double)totalCollisions / noElements);
 		System.out.println("Total Collisions: " + totalCollisions);
+		System.out.println("ArraySize: " + elements.length);
+		System.out.println("Number of Items: " + this.size());
 	}
 }
